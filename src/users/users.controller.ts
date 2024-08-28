@@ -15,8 +15,8 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Post('register')
-  async register(@Body() body: { username: string; password: string }) {
-    return this.usersService.create(body.username, body.password);
+  async register(@Body() body: { username: string; password: string ; email: string ; role: string }) {
+    return this.usersService.create(body.username, body.password, body.email, body.role);
   }
 
   @UseGuards(JwtAuthGuard)

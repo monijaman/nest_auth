@@ -9,16 +9,16 @@ import { RegisterUserDto } from './dto/register-user.dto';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async create(username: string, password: string): Promise<User> {
+  async create(username: string, password: string, email: string, role: string): Promise<User> {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new this.userModel({ username, password: hashedPassword });
+    const user = new this.userModel({ username, password: hashedPassword, email, role });
     return user.save();
   }
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {
-    const { username, password, email } = registerUserDto;
+    const { username, password, email, role } = registerUserDto;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new this.userModel({ username, password: hashedPassword, email });
+    const newUser = new this.userModel({ username, password: hashedPassword, email, role });
     return newUser.save();
   }
 
