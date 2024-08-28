@@ -27,7 +27,7 @@ import { AuthController } from './auth/auth.controller';
     AuthModule, // Replace with your MongoDB connection string
     PassportModule,
     JwtModule.register({
-      secret: 'yourSecretKey', // Use a strong secret key for JWT
+      secret: 'mysecret', // Use a strong secret key for JWT
       signOptions: { expiresIn: '60m' }, // Token expiration time
     }),
   ],

@@ -12,9 +12,9 @@ export class UsersController {
     return this.usersService.create(body.username, body.password);
   }
 
-    @UseGuards(JwtAuthGuard)
- @Post('profile')
-  getProfile(@Request() req) {
-    return 456;//req.user;
+   @UseGuards(JwtAuthGuard)
+ @Get('profile')
+  async getProfile(@Request() req) {
+    return   req.user;
   }
 }
