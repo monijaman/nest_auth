@@ -13,22 +13,32 @@ import { User, UserSchema } from './users/schemas/user.schema';
 import { LocalStrategy } from './auth/local.strategy';
 import { JwtStrategy } from './auth/jwt.strategy';
 import { AuthController } from './auth/auth.controller';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://monir:oviBason*1@cluster0.hxn3i.mongodb.net/auth?retryWrites=true&w=majority',
-      {
-        dbName: 'auth',
-      },
-    ),
+    ConfigModule.forRoot({
+      isGlobal: true, // This makes the configuration available globally
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_URI'),
+        dbName: configService.get<string>('DB_NAME'),
+      }),
+    }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     UsersModule,
-    AuthModule, // Replace with your MongoDB connection string
+    AuthModule,
     PassportModule,
-    JwtModule.register({
-      secret: 'mysecret', // Use a strong secret key for JWT
-      signOptions: { expiresIn: '60m' }, // Token expiration time
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: configService.get<string>('JWT_EXPIRATION_TIME') },
+      }),
     }),
   ],
   controllers: [AppController, AuthController, UsersController],
